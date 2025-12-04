@@ -3,19 +3,22 @@ using System.Text;
 
 namespace Serde.FixedWidth
 {
-    internal sealed class FixedWidthBuffer(StringBuilder stringBuilder)
+    internal sealed class FixedWidthBuffer
     {
-        private readonly StringBuilder _sb = stringBuilder;
         private readonly List<BufferedField> _fields = [];
 
         public void WriteField(string value, FixedFieldInfoAttribute attribute)
+            => WriteField(value, attribute.Offset);
+
+        public void WriteField(string value, int offset)
         {
-            _fields.Add(new(attribute.Offset, value));
+            _fields.Add(new(offset, value));
         }
 
         [Pure]
         public string GetText()
         {
+            StringBuilder sb = new();
             IOrderedEnumerable<BufferedField> _orderedFields = _fields.OrderBy(it => it.Offset);
             int index = 0;
 
@@ -27,10 +30,10 @@ namespace Serde.FixedWidth
                 }
 
                 index = index += field.Length;
-                _sb.Append(field.Value);
+                sb.Append(field.Value);
             }
 
-            return _sb.ToString();
+            return sb.ToString();
         }
     }
 

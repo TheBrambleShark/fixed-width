@@ -6,52 +6,52 @@ namespace Serde.FixedWidth.Writer
     internal sealed partial class FixedWidthWriter : ISerializer
     {
         private readonly FixedWidthBuffer _buffer;
-        private readonly StringBuilder _sb;
-        private readonly EnumSerializer _enumSerializer;
+        private int _index = 0;
 
         public FixedWidthWriter()
         {
-            _sb = new StringBuilder();
-            _buffer = new FixedWidthBuffer(_sb);
-            _enumSerializer = new EnumSerializer(this);
+            _buffer = new FixedWidthBuffer();
         }
 
-        public void WriteBool(bool b) => _sb.Append(b);
-
-        public void WriteBytes(ReadOnlyMemory<byte> bytes) => _sb.Append(Encoding.UTF8.GetString(bytes.Span));
-
-        public void WriteChar(char c) => _sb.Append(c);
-
+        void ISerializer.WriteBool(bool b) => WriteString(b.ToString());
+        void ISerializer.WriteBytes(ReadOnlyMemory<byte> bytes) => WriteString(Encoding.UTF8.GetString(bytes.Span));
+        void ISerializer.WriteChar(char c) => WriteString(c.ToString());
         ITypeSerializer ISerializer.WriteCollection(ISerdeInfo info, int? count) => throw new NotImplementedException();
+        void ISerializer.WriteDateTime(DateTime dt) => WriteString(dt.ToString());
+        void ISerializer.WriteDateTimeOffset(DateTimeOffset dt) => WriteString(dt.ToString());
+        void ISerializer.WriteDecimal(decimal d) => WriteNumber(d);
+        void ISerializer.WriteF32(float f) => WriteNumber(f);
+        void ISerializer.WriteF64(double d) => WriteNumber(d);
+        void ISerializer.WriteI16(short i16) => WriteNumber(i16);
+        void ISerializer.WriteI32(int i32) => WriteNumber(i32);
+        void ISerializer.WriteI64(long i64) => WriteNumber(i64);
+        void ISerializer.WriteI8(sbyte b) => WriteNumber(b);
+        void ISerializer.WriteU16(ushort u16) => WriteNumber(u16);
+        void ISerializer.WriteU32(uint u32) => WriteNumber(u32);
+        void ISerializer.WriteU64(ulong u64) => WriteNumber(u64);
+        void ISerializer.WriteU8(byte b) => WriteNumber(b);
 
-        public void WriteDateTime(DateTime dt) => _sb.Append(dt.ToString());
+        private void WriteNumber<TNumber>(TNumber number)
+            where TNumber : struct, INumber<TNumber>
+        {
+            WriteString(number.ToString() ?? string.Empty);
+        }
 
-        public void WriteDateTimeOffset(DateTimeOffset dt) => _sb.Append(dt.ToString());
-
-        public void WriteDecimal(decimal d) => _sb.Append(d);
-        public void WriteF32(float f) => _sb.Append(f);
-        public void WriteF64(double d) => _sb.Append(d);
-        public void WriteI16(short i16) => _sb.Append(i16);
-        public void WriteI32(int i32) => _sb.Append(i32);
-        public void WriteI64(long i64) => _sb.Append(i64);
-        public void WriteI8(sbyte b) => _sb.Append(b);
-        public void WriteU16(ushort u16) => _sb.Append(u16);
-        public void WriteU32(uint u32) => _sb.Append(u32);
-        public void WriteU64(ulong u64) => _sb.Append(u64);
-        public void WriteU8(byte b) => _sb.Append(b);
-
-        public void WriteNull()
+        void ISerializer.WriteNull()
         {
         }
 
-        public void WriteString(string s) => _sb.Append(s);
+        public void WriteString(string s)
+        {
+            _index += s.Length;
+            _buffer.WriteField(s, _index);
+        }
 
         ITypeSerializer ISerializer.WriteType(ISerdeInfo info)
         {
             return info.Kind switch
             {
                 InfoKind.CustomType => this,
-                InfoKind.Enum => _enumSerializer,
                 _ => throw new InvalidOperationException($"Unexpected info kind: {info.Kind}")
             };
         }
