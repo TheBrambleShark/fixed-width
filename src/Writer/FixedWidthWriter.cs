@@ -5,12 +5,14 @@ namespace Serde.FixedWidth.Writer
 {
     internal sealed partial class FixedWidthWriter : ISerializer
     {
+        private readonly FixedWidthBuffer _buffer;
         private readonly StringBuilder _sb;
         private readonly EnumSerializer _enumSerializer;
 
         public FixedWidthWriter()
         {
             _sb = new StringBuilder();
+            _buffer = new FixedWidthBuffer(_sb);
             _enumSerializer = new EnumSerializer(this);
         }
 
@@ -55,7 +57,7 @@ namespace Serde.FixedWidth.Writer
         }
         public override string ToString()
         {
-            return _sb.ToString();
+            return _buffer.GetText();
         }
     }
 }

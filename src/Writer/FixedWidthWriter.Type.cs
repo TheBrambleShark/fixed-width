@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
@@ -15,25 +16,6 @@ namespace Serde.FixedWidth.Writer
             return FixedFieldInfoAttribute.FromCustomAttributeData(customAttribute);
         }
 
-        private void PadToOffset(ISerdeInfo typeInfo, int index, out FixedFieldInfoAttribute attribute)
-        {
-            attribute = GetAttribute(typeInfo, index);
-            PadToOffset(attribute.Offset);
-        }
-
-        private void PadToOffset(int offset)
-        {
-            if (_sb.Length > offset)
-            {
-                throw new InvalidOperationException("Overflowed field length!");
-            }
-
-            if (_sb.Length < offset)
-            {
-                _sb.Append(Padding, offset - _sb.Length);
-            }
-        }
-
         private void WriteText(string value, FixedFieldInfoAttribute attribute)
         {
             if (value.Length > attribute.Length)
@@ -46,7 +28,7 @@ namespace Serde.FixedWidth.Writer
                 }; 
             }
 
-            WriteString(value.PadRight(attribute.Length));
+            _buffer.WriteField(value.PadRight(attribute.Length), attribute);
         }
 
         public void End(ISerdeInfo info)
@@ -55,7 +37,7 @@ namespace Serde.FixedWidth.Writer
 
         public void WriteBool(ISerdeInfo typeInfo, int index, bool b)
         {
-            PadToOffset(typeInfo, index, out var attribute);
+            var attribute = GetAttribute(typeInfo, index);
             if (!string.IsNullOrEmpty(attribute.Format))
             {
                 string[] splitFormat = attribute.Format.Split('/', StringSplitOptions.TrimEntries);
@@ -70,12 +52,12 @@ namespace Serde.FixedWidth.Writer
 
             if (b && attribute.Length == 4)
             {
-                WriteBool(b);
+                WriteText(b.ToString(), attribute);
                 return;
             }
             if (!b && attribute.Length == 5)
             {
-                WriteBool(b);
+                WriteText(b.ToString(), attribute);
                 return;
             }
 
@@ -85,57 +67,38 @@ namespace Serde.FixedWidth.Writer
         public void WriteBytes(ISerdeInfo typeInfo, int index, ReadOnlyMemory<byte> bytes)
         {
             var attribute = GetAttribute(typeInfo, index);
-            PadToOffset(attribute.Offset);
             WriteText(Encoding.UTF8.GetString(bytes.Span), attribute);
         }
 
         public void WriteChar(ISerdeInfo typeInfo, int index, char c)
         {
-            PadToOffset(typeInfo, index, out _);
-            WriteChar(c);
+            var attribute = GetAttribute(typeInfo, index);
+            WriteText(c.ToString(), attribute);
         }
 
         public void WriteDateTime(ISerdeInfo typeInfo, int index, DateTime dt)
         {
-            PadToOffset(typeInfo, index, out var attribute);
-            if (!string.IsNullOrWhiteSpace(attribute.Format))
-            {
-                WriteText(dt.ToString(attribute.Format), attribute);
-                return;
-            }
+            var attribute = GetAttribute(typeInfo, index);
+            string value = string.IsNullOrWhiteSpace(attribute.Format)
+                ? dt.ToString()
+                : dt.ToString(attribute.Format);
 
-            string value = dt.ToString();
-
-            if (value.Length > attribute.Length)
-            {
-                ThrowValueTooLongForFieldException<string>(value, attribute.Length);
-            }
-
-            WriteDateTime(dt);
+            WriteText(value, attribute);
         }
 
         public void WriteDateTimeOffset(ISerdeInfo typeInfo, int index, DateTimeOffset dt)
         {
-            PadToOffset(typeInfo, index, out var attribute);
-            if (!string.IsNullOrWhiteSpace(attribute.Format))
-            {
-                WriteString(dt.ToString(attribute.Format));
-                return;
-            }
-
-            string value = dt.ToString();
-            if (value.Length > attribute.Length)
-            {
-                ThrowValueTooLongForFieldException<string>(value, attribute.Length);
-            }
-
-            WriteDateTimeOffset(dt);
+            var attribute = GetAttribute(typeInfo, index);
+            string value = string.IsNullOrWhiteSpace(attribute.Format)
+                ? dt.ToString()
+                : dt.ToString(attribute.Format);
+            WriteText(value, attribute);
         }
 
         private void WriteNumber<T>(ISerdeInfo typeInfo, int index, T value)
             where T : struct, INumber<T>
         {
-            PadToOffset(typeInfo, index, out var attribute);
+            var attribute = GetAttribute(typeInfo, index);
 
             string format = string.IsNullOrEmpty(attribute.Format)
                 ? $"D{attribute.Length}"
@@ -162,14 +125,13 @@ namespace Serde.FixedWidth.Writer
 
         public void WriteString(ISerdeInfo typeInfo, int index, string s)
         {
-            PadToOffset(typeInfo, index, out var attribute);
+            var attribute = GetAttribute(typeInfo, index);
             WriteText(s.PadRight(attribute.Length), attribute);
         }
 
         public void WriteValue<T>(ISerdeInfo typeInfo, int index, T value, ISerialize<T> serialize)
             where T : class?
         {
-            PadToOffset(typeInfo, index, out _);
             serialize.Serialize(value, this);
         }
 

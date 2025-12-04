@@ -3,8 +3,8 @@
     public static class Constants
     {
         public const string SampleInput = """
-            John      Doe       0012301011970
-            Janette   Doe       6789001011969
+            John      Doe       0012305501011970
+            Janette   Doe       6789005601011969
             """;
 
         public static IReadOnlyList<string> SampleLines => SampleInput.Split(Environment.NewLine);
