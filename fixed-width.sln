@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11123.170
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serde.FixedWidth.Tests", "tests\Serde.FixedWidth.Tests.csproj", "{BFB024DD-A709-4A13-84A3-3720E3BB5D0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bench", "bench\bench.csproj", "{35C1A909-217B-47CC-BA25-0BD334F36E42}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AA94FAA3-D4D1-46A8-9AB8-AC9775AB1BEB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bench", "bench", "{E6FC9A69-5A89-4523-96C6-91EF48CEF502}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,7 +67,10 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0DF4287F-0E09-4D12-ACD9-46211CFCC160} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-		{BFB024DD-A709-4A13-84A3-3720E3BB5D0E} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-		{35C1A909-217B-47CC-BA25-0BD334F36E42} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{BFB024DD-A709-4A13-84A3-3720E3BB5D0E} = {AA94FAA3-D4D1-46A8-9AB8-AC9775AB1BEB}
+		{35C1A909-217B-47CC-BA25-0BD334F36E42} = {E6FC9A69-5A89-4523-96C6-91EF48CEF502}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1DD1D505-B03E-49BB-85D1-99E42AB27B14}
 	EndGlobalSection
 EndGlobal
