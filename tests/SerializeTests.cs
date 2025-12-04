@@ -4,7 +4,7 @@
     {
         [Theory]
         [ClassData(typeof(TestData.SamplePeople))]
-        public void Serialize_ShouldSucceed_Lines(int index, Person person)
+        public void Serialize_SingleLines(int index, Person person)
         {
             Assert.NotNull(person);
 
@@ -16,7 +16,7 @@
         }
 
         [Fact]
-        public void Serialize_ShouldSucceed_EntireDocument()
+        public void Serialize_File()
         {
             Assert.NotEmpty(Constants.SamplePeople);
 

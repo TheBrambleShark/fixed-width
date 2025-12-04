@@ -3,7 +3,7 @@
     public static class Constants
     {
         public const string SampleInput = """
-            John      Doe       1234501011970
+            John      Doe       0012301011970
             Janette   Doe       6789001011969
             """;
 
@@ -11,7 +11,7 @@
 
         public static IReadOnlyList<Person> SamplePeople =>
         [
-            new Person("John", "Doe", 12345, new(1970, 1, 1)),
+            new Person("John", "Doe", 123, new(1970, 1, 1)),
             new Person("Janette", "Doe", 67890, new(1969, 1, 1))
         ];
     }

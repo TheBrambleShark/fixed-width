@@ -4,7 +4,7 @@
     {
         [Theory]
         [ClassData(typeof(TestData.SampleFileLines))]
-        public void Deserialize_ShouldSucceed_Lines(int index, string line)
+        public void Deserialize_SingleLines(int index, string line)
         {
             Assert.False(string.IsNullOrEmpty(line));
 
@@ -20,7 +20,7 @@
 
         [Theory]
         [ClassData(typeof(TestData.SampleFile))]
-        public void Deserialize_ShouldSucceed_File(string file)
+        public void Deserialize_File(string file)
         {
             Assert.NotEqual(string.Empty, file);
             IEnumerable<Person> people = [];
@@ -51,7 +51,6 @@
         {
             Assert.NotNull(expected);
             Assert.NotNull(actual);
-
             Assert.Equal(expected, actual);
         }
     }
