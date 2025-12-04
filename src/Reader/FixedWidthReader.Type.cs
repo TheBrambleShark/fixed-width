@@ -10,8 +10,6 @@ namespace Serde.FixedWidth.Reader
 {
     internal sealed partial class FixedWidthReader : ITypeDeserializer
     {
-        private const NumberStyles Numeric = NumberStyles.Integer | NumberStyles.AllowThousands;
-
         int? ITypeDeserializer.SizeOpt => null;
         private int _count = 0;
 
@@ -210,14 +208,14 @@ namespace Serde.FixedWidth.Reader
             return '\0';
         }
 
-        byte ITypeDeserializer.ReadU8(ISerdeInfo info, int index) => ReadNumber<byte>(info, index, Numeric);
-        ushort ITypeDeserializer.ReadU16(ISerdeInfo info, int index) => ReadNumber<ushort>(info, index, Numeric);
-        uint ITypeDeserializer.ReadU32(ISerdeInfo info, int index) => ReadNumber<uint>(info, index, Numeric);
-        ulong ITypeDeserializer.ReadU64(ISerdeInfo info, int index) => ReadNumber<ulong>(info, index, Numeric);
-        sbyte ITypeDeserializer.ReadI8(ISerdeInfo info, int index) => ReadNumber<sbyte>(info, index, Numeric);
-        short ITypeDeserializer.ReadI16(ISerdeInfo info, int index) => ReadNumber<short>(info, index, Numeric);
-        int ITypeDeserializer.ReadI32(ISerdeInfo info, int index) => ReadNumber<int>(info, index, Numeric);
-        long ITypeDeserializer.ReadI64(ISerdeInfo info, int index) => ReadNumber<long>(info, index, Numeric);
+        byte ITypeDeserializer.ReadU8(ISerdeInfo info, int index) => ReadNumber<byte>(info, index, NumberStyles.Number);
+        ushort ITypeDeserializer.ReadU16(ISerdeInfo info, int index) => ReadNumber<ushort>(info, index, NumberStyles.Number);
+        uint ITypeDeserializer.ReadU32(ISerdeInfo info, int index) => ReadNumber<uint>(info, index, NumberStyles.Number);
+        ulong ITypeDeserializer.ReadU64(ISerdeInfo info, int index) => ReadNumber<ulong>(info, index, NumberStyles.Number);
+        sbyte ITypeDeserializer.ReadI8(ISerdeInfo info, int index) => ReadNumber<sbyte>(info, index, NumberStyles.Number);
+        short ITypeDeserializer.ReadI16(ISerdeInfo info, int index) => ReadNumber<short>(info, index, NumberStyles.Number);
+        int ITypeDeserializer.ReadI32(ISerdeInfo info, int index) => ReadNumber<int>(info, index, NumberStyles.Number);
+        long ITypeDeserializer.ReadI64(ISerdeInfo info, int index) => ReadNumber<long>(info, index, NumberStyles.Number);
         float ITypeDeserializer.ReadF32(ISerdeInfo info, int index) => ReadNumber<float>(info, index, NumberStyles.Float);
         double ITypeDeserializer.ReadF64(ISerdeInfo info, int index) => ReadNumber<double>(info, index, NumberStyles.Float);
         decimal ITypeDeserializer.ReadDecimal(ISerdeInfo info, int index) => ReadNumber<decimal>(info, index, NumberStyles.Currency);
